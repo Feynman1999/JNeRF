@@ -373,12 +373,11 @@ class MyNerfDataset():
 		self.preload_shuffle = preload_shuffle
 		self.aabb_scale = aabb_scale
 		
-		self.resolution=[0,0]# W*H
-
+		self.H = []
+		self.W = []
 		self.transforms_gpu=[]
 		self.image_data=[]
 		
-		self.n_images=0
 		self.to_jt=to_jt
 		self.have_img=have_img
 		self.compacted_img_data=[]# img_id ,rgba,ray_d,ray_o
@@ -423,7 +422,7 @@ class MyNerfDataset():
 
 		metadata = np.zeros((self.n_images, 11), dtype=np.float32)
 		focal_lengths = np.zeros((self.n_images, 2), dtype=np.float32)
-
+		
 		now_idx= 0
 
 		for frame in tqdm(image_path):
@@ -464,6 +463,7 @@ class MyNerfDataset():
 
 			focal_lengths[now_idx, 0] = K[0, 0]
 			focal_lengths[now_idx, 1] = K[1, 1]
+
 			now_idx += 1
 		
 
@@ -473,6 +473,9 @@ class MyNerfDataset():
 		self.image_data = jt.array(np.stack(self.image_data)) # [nhw, 3]
 		self.transforms_gpu = jt.array(self.transforms_gpu) # b, 3, 4
 		self.transforms_gpu = self.transforms_gpu.transpose(0,2,1) ## transpose to adapt Eigen::Matrix memory
+
+		self.resolution_H = jt.array(self.H)
+		self.resolution_W = jt.array(self.W)
 
 		self.focal_lengths=jt.array(focal_lengths)
 		self.metadata=jt.array(metadata)
