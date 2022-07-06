@@ -1,0 +1,1 @@
+rlaunch --cpu=4 --gpu=1 --memory=64128 -- python tools/run_net.py --config-file ./projects/ngp/configs/ngp_mgtv.py
